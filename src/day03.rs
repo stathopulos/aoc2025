@@ -9,34 +9,26 @@ pub fn solve_part_1() -> u32 {
 // }
 
 fn part_1(input: &str) -> u32 {
-    input
-        .lines()
-        .map(|line| {
-            line.chars()
-                .map(|ch| ch.to_digit(10).expect("Invalid input!"))
+    input.lines().map(|line| {
+        line.chars().map(|ch| {
+            ch.to_digit(10)
+                .expect("Invalid input! Expecting a series of lines with only digits!")
         })
-        .fold(0, |sum, line| {
-            let v: Vec<_> = line.collect();
-            let (tens, ones) = v.iter().fold((0, 0), |(first, snd), ch| {
-                let c = *ch;
-                if c > first {
-                    (*ch, 0)
-                } else if c > snd {
-                    (first, c)
-                } else {
-                    (first, snd)
-                }
-            });
-            if ones == 0 {
-                let new_ones = v
-                    .into_iter()
-                    .skip_while(|c| *c != tens - 1)
-                    .fold(0, |ones, ch| if ch > ones { ch } else { ones });
-                sum + 10 * (tens - 1) + new_ones
+    }).rfold(0, |sum, line| {
+        let mut v: Vec<_> = line.collect();
+        let f = v.pop().expect("Invalid input! Empty Line!");
+        let (tens, ones) = v.iter().fold((0, f), |(first, snd), ch| {
+            let c = *ch;
+            if c > first {
+                (*ch, f)
+            } else if c > snd {
+                (first, c)
             } else {
-                sum + tens * 10 + ones
+                (first, snd)
             }
-        })
+        });
+        sum + tens * 10 + ones
+    })
 }
 
 #[cfg(test)]
