@@ -79,16 +79,15 @@ fn part_2(input: &str, line_size: usize) -> u64 {
 mod tests {
     use super::*;
 
+    const DATA: &str = "987654321111111\n811111111111119\n234234234234278\n818181911112111";
+
     #[test]
     fn part_1_example() {
-        let data = "987654321111111\n811111111111119\n234234234234278\n818181911112111";
-
-        assert_eq!(part_1(data), 357);
+        assert_eq!(part_1(DATA), 357);
     }
 
     #[test]
     fn part_2_example() {
-        const DATA: &str = "987654321111111\n811111111111119\n234234234234278\n818181911112111";
         const TEST_SIZE: usize = {
             let bytes = DATA.as_bytes();
             let mut len = 0;
@@ -97,7 +96,6 @@ mod tests {
             }
             len
         };
-        // assert_eq!(TEST_SIZE, 15)
         assert_eq!(part_2(DATA, TEST_SIZE), 3121910778619);
     }
 }
