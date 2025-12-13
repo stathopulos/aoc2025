@@ -1,9 +1,12 @@
+#[cfg(feature = "input")]
 const INPUT: &str = include_str!("../input/day02.txt");
 
+#[cfg(feature = "input")]
 pub fn solve_part_1() -> u64 {
     run_solution(INPUT, &[2])
 }
 
+#[cfg(feature = "input")]
 pub fn solve_part_2() -> u64 {
     // prime numbers <= 10 cover all combinations for u64 (composites are always just double counting)
     // -[6,10] to correct for composites (2*3 and 2*5) that get double counted

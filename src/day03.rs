@@ -1,5 +1,7 @@
+#[cfg(feature = "input")]
 const INPUT: &str = include_str!("../input/day03.txt");
 
+#[cfg(feature = "input")]
 const LINE_SIZE: usize = {
     let bytes = INPUT.as_bytes();
     let mut len = 0;
@@ -9,10 +11,12 @@ const LINE_SIZE: usize = {
     len
 };
 
+#[cfg(feature = "input")]
 pub fn solve_part_1() -> u32 {
     part_1(INPUT)
 }
 
+#[cfg(feature = "input")]
 pub fn solve_part_2() -> u64 {
     part_2(INPUT, LINE_SIZE)
 }

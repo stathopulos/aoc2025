@@ -1,3 +1,4 @@
+#[cfg(feature = "input")]
 const INPUT: &str = include_str!("../input/day08.txt");
 
 use std::collections::BTreeSet;
@@ -5,10 +6,12 @@ use std::collections::HashSet;
 
 use vec3::Vec3;
 
+#[cfg(feature = "input")]
 pub fn solve_part_1() -> i32 {
     parse(INPUT, 1000)
 }
 
+#[cfg(feature = "input")]
 pub fn solve_part_2() -> u64 {
     parse_last_two(INPUT, 1000)
 }

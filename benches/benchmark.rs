@@ -1,3 +1,4 @@
+#![cfg(feature = "input")]
 #![feature(test)]
 extern crate test;
 
