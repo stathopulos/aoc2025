@@ -23,4 +23,4 @@ macro_rules! benchmark {
     };
 }
 
-benchmark!(day02, day03);
+benchmark!(day02, day03, day08);
