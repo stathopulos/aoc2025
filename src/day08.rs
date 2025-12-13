@@ -1,32 +1,21 @@
 const INPUT: &str = include_str!("../input/day08.txt");
 
-use std::collections::{BTreeSet, HashSet};
+use std::collections::BTreeSet;
+use std::collections::HashSet;
+
 use vec3::Vec3;
 
 pub fn solve_part_1() -> i32 {
     parse(INPUT, 1000)
 }
 
-pub fn solve_part_2() -> i32 {
-    0
+pub fn solve_part_2() -> u64 {
+    parse_last_two(INPUT, 1000)
 }
 
 mod vec3 {
     use std::num::ParseIntError;
     use std::str::FromStr;
-
-    #[derive(Debug)]
-    #[allow(dead_code)]
-    pub enum TryFromStrError {
-        Not3CommaSeperatedValues,
-        Not3Ints(ParseIntError),
-    }
-
-    impl From<ParseIntError> for TryFromStrError {
-        fn from(value: ParseIntError) -> Self {
-            Self::Not3Ints(value)
-        }
-    }
 
     #[derive(Debug, PartialEq, Eq, Hash, Clone, Copy)]
     pub struct Vec3(u64, u64, u64);
@@ -58,6 +47,19 @@ mod vec3 {
                 }
                 (Some(x), Some(y), Some(z), _) => Ok(Vec3(x.parse()?, y.parse()?, z.parse()?)),
             }
+        }
+    }
+
+    #[derive(Debug)]
+    #[allow(dead_code)]
+    pub enum TryFromStrError {
+        Not3CommaSeperatedValues,
+        Not3Ints(ParseIntError),
+    }
+
+    impl From<ParseIntError> for TryFromStrError {
+        fn from(value: ParseIntError) -> Self {
+            Self::Not3Ints(value)
         }
     }
 }
@@ -114,10 +116,10 @@ impl PartialOrd for Circuit {
     }
 }
 
-fn parse(input: &str, len: usize) -> i32 {
+fn parse_input(input: &str) -> BTreeSet<VecPair> {
     let lines = input.lines();
     // a set of each point paired with every other point, brute force and slow, but not that bad given our n
-    let pairs: BTreeSet<VecPair> = lines
+    lines
         .clone()
         .flat_map(|l| {
             lines.clone().filter(move |&r| l != r).map(|r| {
@@ -126,14 +128,18 @@ fn parse(input: &str, len: usize) -> i32 {
                 VecPair(left, right)
             })
         })
-        .collect();
+        .collect()
+}
+
+fn parse(input: &str, num_conns: usize) -> i32 {
+    let pairs = parse_input(input);
     let mut circuits: Vec<Circuit> = Vec::new();
-    for v in pairs.into_iter().take(len) {
+    for v in pairs.into_iter().take(num_conns) {
         let (left, right) = v.to_pair();
         let encountered = circuits
-            .extract_if(.., |a| a.nodes.contains(&left) || a.nodes.contains(&right))
-            .fold(HashSet::from([left, right]), |acc, s| {
-                s.nodes.union(&acc).copied().collect()
+            .extract_if(.., |c| c.nodes.contains(&left) || c.nodes.contains(&right))
+            .fold(HashSet::from([left, right]), |acc, c| {
+                c.nodes.union(&acc).copied().collect()
             });
 
         circuits.push(Circuit { nodes: encountered });
@@ -147,6 +153,28 @@ fn parse(input: &str, len: usize) -> i32 {
         .product()
 }
 
+fn parse_last_two(input: &str, input_len: usize) -> u64 {
+    let mut pairs = parse_input(input);
+    let mut circuits: Vec<Circuit> = Vec::new();
+    let (left, right) = loop {
+        let v = pairs.pop_first().unwrap();
+        let (left, right) = v.to_pair();
+        let encountered = circuits
+            .extract_if(.., |c| c.nodes.contains(&left) || c.nodes.contains(&right))
+            .fold(HashSet::from([left, right]), |acc, c| {
+                c.nodes.union(&acc).copied().collect()
+            });
+
+        circuits.push(Circuit { nodes: encountered });
+        let i = circuits.iter().map(|c| c.nodes.len()).sum::<usize>();
+        if i >= input_len {
+            break v.to_pair();
+        }
+    };
+
+    left.x() * right.x()
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -156,5 +184,13 @@ mod test {
 
         let answer = parse(INPUT, 10);
         assert_eq!(answer, 40)
+    }
+
+    #[test]
+    fn part_2_example() {
+        const INPUT: &str = "162,817,812\n57,618,57\n906,360,560\n592,479,940\n352,342,300\n466,668,158\n542,29,236\n431,825,988\n739,650,466\n52,470,668\n216,146,977\n819,987,18\n117,168,530\n805,96,715\n346,949,466\n970,615,88\n941,993,340\n862,61,35\n984,92,344\n425,690,689";
+
+        let answer = parse_last_two(INPUT, 20);
+        assert_eq!(answer, 25272)
     }
 }
