@@ -8,12 +8,12 @@ use vec3::Vec3;
 
 #[cfg(feature = "input")]
 pub fn solve_part_1() -> i32 {
-    parse(INPUT, 1000)
+    part_1(INPUT, 1000)
 }
 
 #[cfg(feature = "input")]
 pub fn solve_part_2() -> u64 {
-    parse_last_two(INPUT, 1000)
+    part_2(INPUT, 1000)
 }
 
 mod vec3 {
@@ -119,7 +119,7 @@ impl PartialOrd for Circuit {
     }
 }
 
-fn parse_input(input: &str) -> BTreeSet<VecPair> {
+fn parse(input: &str) -> BTreeSet<VecPair> {
     let lines = input.lines();
     // a set of each point paired with every other point, brute force and slow, but not that bad given our n
     lines
@@ -134,8 +134,8 @@ fn parse_input(input: &str) -> BTreeSet<VecPair> {
         .collect()
 }
 
-fn parse(input: &str, num_conns: usize) -> i32 {
-    let pairs = parse_input(input);
+fn part_1(input: &str, num_conns: usize) -> i32 {
+    let pairs = parse(input);
     let mut circuits: Vec<Circuit> = Vec::new();
     for v in pairs.into_iter().take(num_conns) {
         let (left, right) = v.to_pair();
@@ -156,8 +156,8 @@ fn parse(input: &str, num_conns: usize) -> i32 {
         .product()
 }
 
-fn parse_last_two(input: &str, input_len: usize) -> u64 {
-    let mut pairs = parse_input(input);
+fn part_2(input: &str, input_len: usize) -> u64 {
+    let mut pairs = parse(input);
     let mut circuits: Vec<Circuit> = Vec::new();
     let (left, right) = loop {
         let v = pairs.pop_first().unwrap();
@@ -185,7 +185,7 @@ mod test {
     fn part_1_example() {
         const INPUT: &str = "162,817,812\n57,618,57\n906,360,560\n592,479,940\n352,342,300\n466,668,158\n542,29,236\n431,825,988\n739,650,466\n52,470,668\n216,146,977\n819,987,18\n117,168,530\n805,96,715\n346,949,466\n970,615,88\n941,993,340\n862,61,35\n984,92,344\n425,690,689";
 
-        let answer = parse(INPUT, 10);
+        let answer = part_1(INPUT, 10);
         assert_eq!(answer, 40)
     }
 
@@ -193,7 +193,7 @@ mod test {
     fn part_2_example() {
         const INPUT: &str = "162,817,812\n57,618,57\n906,360,560\n592,479,940\n352,342,300\n466,668,158\n542,29,236\n431,825,988\n739,650,466\n52,470,668\n216,146,977\n819,987,18\n117,168,530\n805,96,715\n346,949,466\n970,615,88\n941,993,340\n862,61,35\n984,92,344\n425,690,689";
 
-        let answer = parse_last_two(INPUT, 20);
+        let answer = part_2(INPUT, 20);
         assert_eq!(answer, 25272)
     }
 }
