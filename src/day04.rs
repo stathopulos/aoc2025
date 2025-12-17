@@ -3,6 +3,7 @@ use std::{array, mem};
 #[cfg(feature = "input")]
 const INPUT: &str = include_str!("../input/day04.txt");
 
+#[cfg(feature = "input")]
 const INPUT_SIZE: usize = {
     let bytes = INPUT.as_bytes();
     let mut len = 0;
