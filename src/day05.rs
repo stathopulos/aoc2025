@@ -6,6 +6,11 @@ pub fn solve_part_1() -> usize {
     part_1(INPUT)
 }
 
+#[cfg(feature = "input")]
+pub fn solve_part_2() -> u64 {
+    part_2(INPUT)
+}
+
 fn part_1(input: &str) -> usize {
     let (left, right) = input
         .split_once("\n\n")
@@ -37,6 +42,43 @@ fn part_1(input: &str) -> usize {
     count
 }
 
+fn part_2(input: &str) -> u64 {
+    let (left, _) = input
+        .split_once("\n\n")
+        .expect(r#"Input is not ranges and integers seperated by \n\n"#);
+    let ranges = left.lines().map(|range_str| {
+        let (left_str, right_str) = range_str
+            .split_once("-")
+            .expect("Invalid input! Not a '-' seperated range!");
+        let left = left_str
+            .parse::<u64>()
+            .expect("Left side of range not an int");
+        let right = right_str
+            .parse::<u64>()
+            .expect("Right side of range not an int");
+        (left, right)
+    });
+
+    let mut encountered: Vec<(u64, u64)> = Vec::new();
+    for (left, right) in ranges {
+        // select ranges that aren't disjoint with ours
+        let merges: Vec<_> = encountered
+            .extract_if(.., |(l, r)| left <= *r && *l <= right)
+            .collect();
+        encountered.push(
+            merges
+                .into_iter()
+                .fold((left, right), |(l1, r1), (l2, r2)| (l1.min(l2), r1.max(r2))),
+        );
+    }
+
+    let mut sum = 0;
+    for (left, right) in encountered {
+        sum += 1 + right - left
+    }
+    sum
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -48,5 +90,12 @@ mod test {
         let answer = part_1(DATA);
 
         assert_eq!(answer, 3)
+    }
+
+    #[test]
+    fn part_2_example() {
+        let answer = part_2(DATA);
+
+        assert_eq!(answer, 14)
     }
 }
